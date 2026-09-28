@@ -1,4 +1,7 @@
-generator client { provider = "prisma-client-js" }
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -9,15 +12,17 @@ model Admin {
   email        String @unique
   passwordHash String
 }
+
 model Item {
   id          Int      @id @default(autoincrement())
-  category    String   // quran | clothing | clay
+  category    String
   title       String
   description String
   price       Int?
   imageUrl    String?
   createdAt   DateTime @default(now())
 }
+
 model Inquiry {
   id        Int      @id @default(autoincrement())
   name      String
