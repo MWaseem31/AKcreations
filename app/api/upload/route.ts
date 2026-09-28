@@ -9,6 +9,6 @@ export async function POST(req: Request) {
   if (!file) return NextResponse.json({ error: 'No file' }, { status: 400 });
   const buf = Buffer.from(await file.arrayBuffer());
   const url: string = await new Promise((res, rej) =>
-    cloudinary.uploader.upload_stream({ folder: 'noor', resource_type: 'image' }, (e, r) => (e ? rej(e) : res(r!.secure_url))).end(buf));
+    cloudinary.uploader.upload_stream({ folder: 'akcreations', resource_type: 'image' }, (e, r) => (e ? rej(e) : res(r!.secure_url))).end(buf));
   return NextResponse.json({ url });
 }

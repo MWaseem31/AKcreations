@@ -14,8 +14,8 @@ export default async function Home() {
     <main>
       <header className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <span className="text-xl font-bold text-brand-500">Noor Creations</span>
-          <a href="/api/auth/signin" className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">Sign in</a>
+          <span className="text-xl font-bold text-brand-500">AK Creations</span>
+          <a href="/admin/login" className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">Admin login</a>
         </div>
       </header>
       <section className="bg-brand-950 px-4 py-16 text-center text-white">

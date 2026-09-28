@@ -5,7 +5,7 @@ import AdminForm from '@/components/AdminForm';
 export const dynamic = 'force-dynamic';
 
 export default async function Admin() {
-  if (!(await isAdmin())) redirect('/api/auth/signin?callbackUrl=/admin');
+  if (!(await isAdmin())) redirect('/admin/login');
   const items = await prisma.item.findMany({ orderBy: { createdAt: 'desc' } });
   const inquiries = await prisma.inquiry.findMany({ orderBy: { createdAt: 'desc' }, take: 20 });
   const count = (c: string) => items.filter((i) => i.category === c).length;
@@ -13,11 +13,11 @@ export default async function Admin() {
   return (
     <div className="min-h-screen lg:flex">
       <aside className="bg-white px-6 py-5 lg:w-60 lg:border-r lg:border-gray-200">
-        <p className="text-xl font-bold text-brand-500">Noor Creations</p>
+        <p className="text-xl font-bold text-brand-500">AK Creations</p>
         <nav className="mt-4 flex gap-2 text-sm lg:flex-col">
           <span className="rounded-lg bg-brand-50 px-3 py-2 font-medium text-brand-500">Dashboard</span>
           <a href="/" className="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100">View website</a>
-          <a href="/api/auth/signout" className="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100">Sign out</a>
+          <form action="/api/admin/logout" method="post" className="contents"><button className="rounded-lg px-3 py-2 text-left text-gray-600 hover:bg-gray-100">Sign out</button></form>
         </nav>
       </aside>
       <main className="flex-1 space-y-6 p-4 md:p-8">

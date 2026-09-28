@@ -1,21 +1,23 @@
 services:
   - type: web
-    name: noor-creations
+    name: ak-creations
     runtime: node
     plan: free
-    buildCommand: npm install && npx prisma db push && npm run build
+    buildCommand: npm install && npx prisma db push --accept-data-loss && npm run build
     startCommand: npm start
     envVars:
       - key: DATABASE_URL
         sync: false
-      - key: NEXTAUTH_URL
+      - key: ADMIN_USERNAME
         sync: false
-      - key: NEXTAUTH_SECRET
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: AUTH_SECRET
         generateValue: true
-      - key: GOOGLE_CLIENT_ID
+      - key: POLLINATIONS_API_KEY
         sync: false
-      - key: GOOGLE_CLIENT_SECRET
-        sync: false
+      - key: POLLINATIONS_MODEL
+        value: deepseek
       - key: CLOUDINARY_URL
         sync: false
       - key: RESEND_API_KEY

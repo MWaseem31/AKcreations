@@ -1,5 +1,5 @@
 import './globals.css';
-export const metadata = { title: 'Noor Creations', description: 'Quran teaching, clothing design and clay art' };
+export const metadata = { title: 'AK Creations', description: 'Quran teaching, clothing design and clay art' };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
