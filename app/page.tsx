@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import Widgets from '@/components/Widgets';
+import { getSettings } from '@/lib/settings';
 export const dynamic = 'force-dynamic'; // admin changes show up immediately
 
 const SECTIONS = [
@@ -10,12 +11,18 @@ const SECTIONS = [
 
 export default async function Home() {
   const items = await prisma.item.findMany({ orderBy: { createdAt: 'desc' } });
+  const { etsyUrl, teachingUrl } = await getSettings();
+  const linkBtn = 'rounded-lg border border-brand-500 px-4 py-2 text-sm font-medium text-brand-500 hover:bg-brand-50';
   return (
     <main>
       <header className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <span className="text-xl font-bold text-brand-500">AK Creations</span>
-          <a href="/admin/login" className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">Admin login</a>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {etsyUrl && <a href={etsyUrl} target="_blank" rel="noopener noreferrer" className={linkBtn}>Etsy shop</a>}
+            {teachingUrl && <a href={teachingUrl} target="_blank" rel="noopener noreferrer" className={linkBtn}>Teaching app</a>}
+            <a href="/admin/login" className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">Admin login</a>
+          </div>
         </div>
       </header>
       <section className="bg-brand-950 px-4 py-16 text-center text-white">

@@ -1,16 +1,35 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getRecipient } from '@/lib/settings';
+import { sendMail, mailConfigured } from '@/lib/mailer';
+import { isEmail } from '@/lib/cv';
+
+export const runtime = 'nodejs'; // nodemailer needs Node APIs
 
 export async function POST(req: Request) {
-  const { name, email, message } = await req.json();
+  const b = await req.json().catch(() => ({}));
+  const name = String(b.name ?? '').trim().slice(0, 100);
+  const email = String(b.email ?? '').trim().slice(0, 200);
+  const message = String(b.message ?? '').trim().slice(0, 3000);
   if (!name || !email || !message) return NextResponse.json({ error: 'Fill all fields' }, { status: 400 });
-  await prisma.inquiry.create({ data: { name: String(name).slice(0, 100), email: String(email).slice(0, 200), message: String(message).slice(0, 3000) } });
-  if (process.env.RESEND_API_KEY) {
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: 'onboarding@resend.dev', to: process.env.DEVELOPER_EMAIL, subject: `New inquiry from ${name}`, text: `${email}\n\n${message}` }),
-    }).catch(() => {});
+  if (!isEmail(email)) return NextResponse.json({ error: 'Enter a valid email' }, { status: 400 });
+
+  // 1) Always keep a copy in the dashboard
+  await prisma.inquiry.create({ data: { name, email, message } });
+
+  // 2) Email it to the admin's chosen address (never fails the visitor's request)
+  try {
+    const to = await getRecipient();
+    if (to && mailConfigured()) {
+      await sendMail({
+        to,
+        replyTo: email, // hitting "Reply" answers the visitor
+        subject: `New message from ${name}`,
+        text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
+      });
+    }
+  } catch (e) {
+    console.error('contact email failed', e);
   }
   return NextResponse.json({ ok: true });
 }

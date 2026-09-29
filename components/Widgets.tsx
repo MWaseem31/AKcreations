@@ -13,7 +13,8 @@ export default function Widgets() {
   async function send(e: React.FormEvent) {
     e.preventDefault();
     const r = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f) });
-    setStatus(r.ok ? 'Message sent. We will reply by email.' : 'Please fill in every field.');
+    const d = await r.json().catch(() => ({}));
+    setStatus(r.ok ? 'Message sent. We will reply by email.' : d.error || 'Please fill in every field.');
     if (r.ok) setF({ name: '', email: '', message: '' });
   }
   async function ask(e: React.FormEvent) {
@@ -36,7 +37,7 @@ export default function Widgets() {
         <h2 className="text-xl font-semibold text-gray-800">Contact us</h2>
         <input className={input} placeholder="Your name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
         <input className={input} type="email" placeholder="Your email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />
-        <textarea className={input} rows={4} placeholder="How can we help?" value={f.message} onChange={(e) => setF({ ...f, message: e.target.value })} />
+        <textarea className={input} rows={4} placeholder="Message" value={f.message} onChange={(e) => setF({ ...f, message: e.target.value })} />
         <button className="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600">Send message</button>
         {status && <p className="text-sm text-gray-500">{status}</p>}
       </form>

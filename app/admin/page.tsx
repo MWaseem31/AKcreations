@@ -2,12 +2,17 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { isAdmin } from '@/lib/auth';
 import AdminForm from '@/components/AdminForm';
+import SettingsForm from '@/components/SettingsForm';
+import CvBuilder from '@/components/CvBuilder';
+import { getSettings } from '@/lib/settings';
+import { mailConfigured } from '@/lib/mailer';
 export const dynamic = 'force-dynamic';
 
 export default async function Admin() {
   if (!(await isAdmin())) redirect('/admin/login');
   const items = await prisma.item.findMany({ orderBy: { createdAt: 'desc' } });
   const inquiries = await prisma.inquiry.findMany({ orderBy: { createdAt: 'desc' }, take: 20 });
+  const settings = await getSettings();
   const count = (c: string) => items.filter((i) => i.category === c).length;
   const stats = [['Quran lessons', count('quran')], ['Clothing designs', count('clothing')], ['Clay pieces', count('clay')], ['Messages', inquiries.length]];
   return (
@@ -16,6 +21,8 @@ export default async function Admin() {
         <p className="text-xl font-bold text-brand-500">AK Creations</p>
         <nav className="mt-4 flex gap-2 text-sm lg:flex-col">
           <span className="rounded-lg bg-brand-50 px-3 py-2 font-medium text-brand-500">Dashboard</span>
+          <a href="#settings" className="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100">Email &amp; links</a>
+          <a href="#cv" className="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100">CV</a>
           <a href="/" className="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100">View website</a>
           <form action="/api/admin/logout" method="post" className="contents"><button className="rounded-lg px-3 py-2 text-left text-gray-600 hover:bg-gray-100">Sign out</button></form>
         </nav>
@@ -31,12 +38,14 @@ export default async function Admin() {
           ))}
         </div>
         <AdminForm items={items} />
+        <SettingsForm initial={{ contactEmail: settings.contactEmail, etsyUrl: settings.etsyUrl, teachingUrl: settings.teachingUrl }} smtpReady={mailConfigured()} />
+        <CvBuilder initial={settings.cv} contactEmail={settings.contactEmail} />
         <div className="rounded-2xl border border-gray-200 bg-white p-6">
           <h2 className="mb-3 text-lg font-semibold text-gray-800">Recent messages</h2>
           {inquiries.length === 0 && <p className="text-sm text-gray-400">No messages yet.</p>}
           <ul className="divide-y divide-gray-100">
             {inquiries.map((q) => (
-              <li key={q.id} className="py-3"><p className="text-sm font-medium text-gray-800">{q.name}</p><p className="text-sm text-gray-500">{q.message}</p></li>
+              <li key={q.id} className="py-3"><p className="text-sm font-medium text-gray-800">{q.name} <span className="font-normal text-gray-400">&lt;{q.email}&gt;</span></p><p className="text-sm text-gray-500">{q.message}</p></li>
             ))}
           </ul>
         </div>

@@ -24,3 +24,13 @@ model Inquiry {
   message   String
   createdAt DateTime @default(now())
 }
+
+// One row (id = 1) holding everything the admin can edit from the dashboard.
+model SiteSettings {
+  id           Int      @id @default(1)
+  contactEmail String? // where contact-form messages are emailed
+  etsyUrl      String?
+  teachingUrl  String?
+  cv           Json? // CV builder data
+  updatedAt    DateTime @updatedAt
+}
