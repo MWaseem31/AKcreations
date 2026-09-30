@@ -20,17 +20,37 @@ services:
         value: deepseek
       - key: CLOUDINARY_URL
         sync: false
-      - key: SMTP_HOST
-        sync: false
-      - key: SMTP_PORT
-        value: "2525"
-      - key: SMTP_USER
-        sync: false
-      - key: SMTP_PASS
-        sync: false
-      - key: SMTP_FROM
+      - key: RESEND_API_KEY
         sync: false
       - key: DEVELOPER_EMAIL
         sync: false
       - key: CRON_SECRET
         generateValue: true
+
+  # Separate 24/7 background worker (WhatsApp bot). Runs independently of the
+  # site above; ping its URL with UptimeRobot so Render's free tier doesn't
+  # spin it down.
+  - type: web
+    name: ak-whatsapp-bot
+    runtime: python
+    plan: free
+    rootDir: whatsapp-bot
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: WA_AGENT_TOKEN
+        sync: false
+      - key: WA_AGENT_TOKEN_2
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: CEREBRAS_API_KEY
+        sync: false
+      - key: CEREBRAS_MODEL
+        value: gpt-oss-120b
+      - key: CEREBRAS_MODEL_2
+        value: zai-glm-4.7
+      - key: POLLINATIONS_API_KEY
+        sync: false

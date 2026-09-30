@@ -1,0 +1,17 @@
+# WhatsApp agent token(s). One agent per key; add up to 5.
+WA_AGENT_TOKEN=
+WA_AGENT_TOKEN_2=
+WA_AGENT_TOKEN_3=
+
+# Chat providers, tried in this order until one answers. All optional except
+# that at least Pollinations (shared with the main site) should work.
+GROQ_API_KEY=
+GROQ_MODEL=openai/gpt-oss-120b
+
+CEREBRAS_API_KEY=
+CEREBRAS_MODEL=gpt-oss-120b
+CEREBRAS_MODEL_2=zai-glm-4.7
+
+POLLINATIONS_API_KEY=
+
+# PORT is set automatically by Render — do not set it manually.
